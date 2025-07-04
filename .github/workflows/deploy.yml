@@ -1,10 +1,7 @@
 name: Deploy Bicep to Azure
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:  # 👈 This enables manual trigger from GitHub UI
+on: 
+  workflow_dispatch:  # This enables manual trigger from GitHub UI
 
 jobs:
   deploy:
