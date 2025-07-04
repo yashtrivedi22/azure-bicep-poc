@@ -1,4 +1,4 @@
-param dataFactoryName string = 'adf-template-bicep-gh'
+param dataFactoryName string = 'adftempl001'
 param location string = resourceGroup().location
 
 resource dataFactoryName_resource 'Microsoft.DataFactory/factories@2018-06-01' =  {
