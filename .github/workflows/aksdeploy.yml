@@ -23,5 +23,5 @@ jobs:
         with:
           subscriptionId: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
           resourceGroupName: sharedsrvrg
-          template: ./main.bicep
+          template: ./aksmain.bicep
           parameters: ''
