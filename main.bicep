@@ -1,4 +1,4 @@
-param storageAccountName string = 'bicepstorage${uniqueString(resourceGroup().id)}'
+param storageAccountName string = 'bicepstorage001'
 param location string = resourceGroup().location
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
