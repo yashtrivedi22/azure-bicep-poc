@@ -23,5 +23,5 @@ jobs:
         with:
           subscriptionId: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
           resourceGroupName: sharedsrvrg
-          template: ./aksmain.bicep
+          template: ./main.bicep
           deploymentName: aks-deploy
