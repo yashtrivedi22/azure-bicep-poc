@@ -1,9 +1,7 @@
 name: Deploy AKS via Bicep
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:  # 👈 Only manual trigger enabled
 
 jobs:
   deploy:
