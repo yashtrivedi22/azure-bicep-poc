@@ -1,25 +1,43 @@
-name: Deploy AKS via Bicep
+name: Build and Deploy to AKS with Helm
 
 on:
-  workflow_dispatch:  # 👈 Only manual trigger enabled
+  push:
+    branches:
+      - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy Bicep
-        uses: azure/arm-deploy@v1
-        with:
-          subscriptionId: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
-          resourceGroupName: sharedsrvrg
-          template: ./main.bicep
-          deploymentName: aks-deploy
+    - name: Azure Container Registry Login
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.REGISTRY_NAME }}.azurecr.io
+        username: ${{ secrets.REGISTRY_NAME }}
+        password: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t ${{ secrets.REGISTRY_NAME }}.azurecr.io/my-app:latest .
+        docker push ${{ secrets.REGISTRY_NAME }}.azurecr.io/my-app:latest
+
+    - name: Set AKS Context
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: ${{ secrets.RESOURCE_GROUP }}
+        cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
+
+    - name: Deploy with Helm
+      run: |
+        helm upgrade --install my-app ./helm \
+          --set image.repository=${{ secrets.REGISTRY_NAME }}.azurecr.io/my-app \
+          --set image.tag=latest
